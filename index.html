@@ -1,21 +1,76 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Redirecting...</title>
-    <script>
-      const params = new URLSearchParams(window.location.search);
-      const uid = params.get("uid");
-      if (!uid) {
-        document.write("Missing UID.");
-      } else {
-        const base = "https://script.google.com/macros/s/AKfycbyFBklXBY-GS4nROGiSijePal0QpG0eG7sN6J80e9c-_EgXd6LagRMKrh5DFLCMIEIA/exec";
-        const encoded = encodeURIComponent(uid);
-        window.location.href = `${base}?uid=${encoded}`;
-      }
-    </script>
-  </head>
-  <body>
-    <p>Redirecting...</p>
-  </body>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    .container {
+      max-width: 480px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    #reader {
+      width: 100%;
+      margin: 20px 0;
+    }
+    .btn {
+      padding: 10px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #e1f5cb;
+      color: #1a3e2a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Scan Equipment QR Code</h2>
+    <div id="reader"></div>
+    <p id="result" style="font-weight: 600; color: #2d6a4f;"></p>
+    <button class="btn" onclick="restartScanner()">Rescan</button>
+  </div>
+
+  <script>
+    let scanner;
+
+    function startScanner() {
+      scanner = new Html5Qrcode("reader");
+      scanner.start(
+        { facingMode: "environment" },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 }
+        },
+        qrCodeMessage => {
+          document.getElementById("result").textContent = "Scanned: " + qrCodeMessage;
+          scanner.stop().then(() => {
+            window.location.href = qrCodeMessage;
+          });
+        },
+        errorMessage => {
+          // silence scan errors
+        }
+      ).catch(err => {
+        document.getElementById("result").textContent = "Camera error: " + err;
+      });
+    }
+
+    function restartScanner() {
+      document.getElementById("result").textContent = "";
+      Html5Qrcode.getCameras().then(() => startScanner());
+    }
+
+    window.onload = startScanner;
+  </script>
+</body>
 </html>
