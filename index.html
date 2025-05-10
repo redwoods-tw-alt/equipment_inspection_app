@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redirecting...</title>
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const uid = params.get("uid");
+      if (!uid) {
+        document.write("Missing UID.");
+      } else {
+        const base = "https://script.google.com/macros/s/AKfycbyFBklXBY-GS4nROGiSijePal0QpG0eG7sN6J80e9c-_EgXd6LagRMKrh5DFLCMIEIA/exec";
+        const encoded = encodeURIComponent(uid);
+        window.location.href = `${base}?uid=${encoded}`;
+      }
+    </script>
+  </head>
+  <body>
+    <p>Redirecting...</p>
+  </body>
+</html>
